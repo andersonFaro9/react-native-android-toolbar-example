@@ -5,9 +5,9 @@ start build:
 
 ```
 
-react-native run-android
-
 genymotion
+
+react-native run-android
 
 adb logcat
 ```
