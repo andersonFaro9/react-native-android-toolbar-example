@@ -1,24 +1,61 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
-var React = require('react-native');
+import React from 'react-native';
+
+var navigator = {userAgent: 'react-native'};
+import io from './node_modules/socket.io-client/socket.io.js';
+
 var {
   AppRegistry,
   StyleSheet,
   Text,
   View,
+  ListView
 } = React;
 
+var ds = new ListView.DataSource({
+  rowHasChanged: (r1, r2) => r1 !== r2
+});
+
 var Tweetes = React.createClass({
+  getInitialState: function() {
+    return {
+      tweets: ds.cloneWithRows([]),
+      raw: []
+    };
+  },
+  componentWillMount: function() {
+    this.socket = io('https://tweetes.localtunnel.me', {jsonp: false});
+    this.socket.on('connect', ()=> {console.log('connect');});
+    this.socket.on('tweet', this.updateTweet);
+  },
+  updateTweet: function(data) {
+    raw = this.state.raw;
+    raw.push(data);
+    console.log(35, raw);
+    this.setState({
+      tweets: this.state.tweets.cloneWithRows(raw),
+      raw: raw
+    });
+  },
+
+  itemView: function(data) {
+    return (
+      <Text> {data.text} </Text>
+    );
+  },
   render: function() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Tweetes
         </Text>
+
+        <ListView
+          dataSource={this.state.tweets}
+          renderRow={this.itemView}
+        />
+
         <Text style={styles.instructions}>
           Shake or press menu button for dev menu
         </Text>
