@@ -17,18 +17,23 @@ server.listen(config.port);
 
 io.sockets.on('connection', (socket) => {
   console.log('connect');
-  io.sockets.emit('tweet', {
-    text: 'test tweet',
-    user: {
-      name: 'Some human',
-      handle: 'testhandle',
-      image: 'http://slacy.me/images/favicon.png'
-    }
-  });
+  // io.sockets.emit('tweet', {
+  //   text: 'test tweet',
+  //   user: {
+  //     name: 'Some human',
+  //     handle: 'testhandle',
+  //     image: 'http://slacy.me/images/favicon.png'
+  //   }
+  // });
 
+  var hash = '';
   socket.on('tag', (data) => {
-    console.log(data);
-    var stream = twit.stream('statuses/filter', ({track: data.hash}));
+    if (!data.hash) {
+      return;
+    }
+    hash = data.hash;
+
+    var stream = twit.stream('statuses/filter', ({track: hash}));
 
     stream.on('tweet', (tweet) => {
       console.log(tweet.text);

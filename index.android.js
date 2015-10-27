@@ -13,8 +13,7 @@ var {
   View,
   Image,
   ListView,
-  ProgressBarAndroid,
-  ToastAndroid
+  ProgressBarAndroid
 } = React;
 
 var ds = new ListView.DataSource({
@@ -63,7 +62,7 @@ var Tweetes = React.createClass({
         </Text>
         <TextInput
           style={styles.input}
-          onChangeText={(opts) => this.setState({hash: opts.text})}
+          onChangeText={(text) => this.setState({hash: text})}
           onSubmitEditing={this.sendHash}
           value={this.state.hash}
         />
@@ -94,6 +93,7 @@ ItemView = function(data) {
     </View>
   );
 };
+
 
 var styles = StyleSheet.create({
   container: {
