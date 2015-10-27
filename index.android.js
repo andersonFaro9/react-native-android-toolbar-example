@@ -43,7 +43,7 @@ var Tweetes = React.createClass({
 
   itemView: function(data) {
     return (
-      <Text style={styles.itemView> {data.text} </Text>
+      <Text style={styles.itemView}> {data.text} </Text>
     );
   },
   render: function() {
@@ -78,8 +78,8 @@ var styles = StyleSheet.create({
   itemView: {
     textAlign: 'center',
     color: '#333333',
-    backgroundColor: '#efefef'
-    padding: 20
+    backgroundColor: '#efefef',
+    padding: 20,
     marginBottom: 5,
   },
 });
