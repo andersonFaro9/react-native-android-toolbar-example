@@ -14,21 +14,21 @@ var twit = new Twit(config.twitter);
 
 server.listen(config.port);
 
-localTunnel(config.port, {subdomain: 'tweetes'}, (err, tunnel)=> {
+localTunnel(config.port, {subdomain: 'tweetes'}, (err, tunnel) => {
   if (err) {
     return console.log(err);
   }
   console.log('tunnel running on: ', tunnel.url);
 });
 
-io.sockets.on('connection', (socket)=> {
+io.sockets.on('connection', (socket) => {
   console.log('connect');
   // socket.emit('tweet', {text: 'test, test, wows'});
 
-  socket.on('tag', (data)=> {
+  socket.on('tag', (data) => {
     var stream = twit.stream('statuses/filter', ({track: data.hash}));
 
-    stream.on('tweet', (tweet)=> {
+    stream.on('tweet', (tweet) => {
       io.sockets.emit('tweet', tweet);
     });
   });

@@ -26,7 +26,9 @@ var Tweetes = React.createClass({
   },
   componentWillMount: function() {
     this.socket = io('https://tweetes.localtunnel.me', {jsonp: false});
-    this.socket.on('connect', ()=> {console.log('connect');});
+    this.socket.on('connect', () => {
+      console.log('connect');
+  });
     this.socket.on('tweet', this.updateTweet);
   },
   updateTweet: function(data) {
@@ -41,7 +43,7 @@ var Tweetes = React.createClass({
 
   itemView: function(data) {
     return (
-      <Text> {data.text} </Text>
+      <Text style={styles.itemView> {data.text} </Text>
     );
   },
   render: function() {
@@ -56,9 +58,6 @@ var Tweetes = React.createClass({
           renderRow={this.itemView}
         />
 
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
       </View>
     );
   }
@@ -76,9 +75,11 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  instructions: {
+  itemView: {
     textAlign: 'center',
     color: '#333333',
+    backgroundColor: '#efefef'
+    padding: 20
     marginBottom: 5,
   },
 });
