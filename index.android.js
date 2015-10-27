@@ -9,8 +9,12 @@ var {
   AppRegistry,
   StyleSheet,
   Text,
+  TextInput,
   View,
-  ListView
+  Image,
+  ListView,
+  ProgressBarAndroid,
+  ToastAndroid
 } = React;
 
 var ds = new ListView.DataSource({
@@ -21,14 +25,12 @@ var Tweetes = React.createClass({
   getInitialState: function() {
     return {
       tweets: ds.cloneWithRows([]),
-      raw: []
+      raw: [],
+      hash: 'ftw'
     };
   },
   componentWillMount: function() {
-    this.socket = io('https://tweetes.localtunnel.me', {jsonp: false});
-    this.socket.on('connect', () => {
-      console.log('connect');
-  });
+    this.socket = io('http://192.168.56.1:5000', {jsonp: false});
     this.socket.on('tweet', this.updateTweet);
   },
   updateTweet: function(data) {
@@ -37,25 +39,41 @@ var Tweetes = React.createClass({
     console.log(35, raw);
     this.setState({
       tweets: this.state.tweets.cloneWithRows(raw),
-      raw: raw
+      raw: raw,
+      loading: false
     });
   },
-
-  itemView: function(data) {
-    return (
-      <Text style={styles.itemView}> {data.text} </Text>
-    );
+  sendHash: function() {
+    this.setState({loading: true});
+    this.socket.emit('tag', {hash: this.state.hash});
   },
+
   render: function() {
+    var Loader;
+    var Indicator;
+
+    if (this.state.loading) {
+      Loader = <ProgressBarAndroid style={styles.loader}/>
+    }
+
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Tweetes
         </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(opts) => this.setState({hash: opts.text})}
+          onSubmitEditing={this.sendHash}
+          value={this.state.hash}
+        />
+
+        {Loader}
+        {Indicator}
 
         <ListView
           dataSource={this.state.tweets}
-          renderRow={this.itemView}
+          renderRow={ItemView}
         />
 
       </View>
@@ -63,25 +81,72 @@ var Tweetes = React.createClass({
   }
 });
 
+
+ItemView = function(data) {
+  return (
+    <View style={itemViewStyle.view}>
+      <Image
+        source={{uri: data.user.image}}
+        style={itemViewStyle.image}
+      />
+      <Text style={itemViewStyle.name}> {data.user.name} </Text>
+      <Text style={itemViewStyle.text}> {data.text} </Text>
+    </View>
+  );
+};
+
 var styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
     backgroundColor: '#F5FCFF',
+  },
+  loader: {
+    alignSelf: 'center'
+  },
+  input: {
+    height: 50,
+    margin: 20,
+    fontSize: 22
   },
   welcome: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
   },
-  itemView: {
-    textAlign: 'center',
-    color: '#333333',
-    backgroundColor: '#efefef',
-    padding: 20,
-    marginBottom: 5,
+});
+
+var itemViewStyle = StyleSheet.create({
+  view: {
+    flex: 0,
+    backgroundColor: '#FAFFFF',
+    padding: 10,
+    margin: 20,
+    flexDirection: 'row',
+    borderColor: '#efefef',
+    borderBottomWidth: 2
+
   },
+  name: {
+    fontWeight: 'bold',
+    color: '#333',
+    alignSelf: 'center',
+    fontSize: 20,
+    flex: 1
+  },
+  text: {
+    color: '#333',
+    alignSelf: 'center',
+    fontSize: 20,
+    flex: 1,
+  },
+  image: {
+    height: 50,
+    width: 50,
+    margin: 10,
+    alignSelf: 'center'
+  }
 });
 
 AppRegistry.registerComponent('Tweetes', () => Tweetes);
