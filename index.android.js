@@ -35,7 +35,6 @@ var Tweetes = React.createClass({
   updateTweet: function(data) {
     raw = this.state.raw;
     raw.push(data);
-    console.log(35, raw);
     this.setState({
       tweets: this.state.tweets.cloneWithRows(raw),
       raw: raw,

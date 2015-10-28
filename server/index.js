@@ -4,7 +4,6 @@ var express = require('express');
 var app = express();
 var http = require('http');
 var Twit = require('twit');
-// var localTunnel = require('localtunnel');
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
@@ -17,14 +16,6 @@ server.listen(config.port);
 
 io.sockets.on('connection', (socket) => {
   console.log('connect');
-  // io.sockets.emit('tweet', {
-  //   text: 'test tweet',
-  //   user: {
-  //     name: 'Some human',
-  //     handle: 'testhandle',
-  //     image: 'http://slacy.me/images/favicon.png'
-  //   }
-  // });
 
   var hash = '';
   socket.on('tag', (data) => {
