@@ -17,7 +17,7 @@ var {
 } = React;
 
 var ds = new ListView.DataSource({
-  rowHasChanged: (r1, r2) => r1 !== r2
+  rowHasChanged: (r1, r2) => true
 });
 
 var Tweetes = React.createClass({
@@ -36,7 +36,7 @@ var Tweetes = React.createClass({
     raw = this.state.raw;
     raw.push(data);
     this.setState({
-      tweets: this.state.tweets.cloneWithRows(raw),
+      tweets: this.state.tweets.cloneWithRows(raw.reverse()),
       raw: raw,
       loading: false
     });
