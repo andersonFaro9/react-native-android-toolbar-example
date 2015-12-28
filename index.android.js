@@ -1,151 +1,67 @@
 'use strict';
 
-import React from 'react-native';
-
-var navigator = {userAgent: 'react-native'};
-import io from './node_modules/socket.io-client/socket.io.js';
-
+var React = require('react-native');
 var {
-  AppRegistry,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  Image,
-  ListView,
-  ProgressBarAndroid
+  AppRegistry
 } = React;
 
-var ds = new ListView.DataSource({
-  rowHasChanged: (r1, r2) => true
-});
+var ToolbarAndroid = require('ToolbarAndroid');
 
-var Tweetes = React.createClass({
+var ToolbarAndroidExample = React.createClass({
+  statics: {
+    title: '<ToolbarAndroid>',
+    description: 'Examples of using the Android toolbar.'
+  },
   getInitialState: function() {
     return {
-      tweets: ds.cloneWithRows([]),
-      raw: [],
-      hash: 'ftw'
+      actionText: 'Example app with toolbar component',
+      toolbarSwitch: false,
+      colorProps: {
+        titleColor: '#3b5998',
+        subtitleColor: '#6a7180',
+      },
     };
   },
-  componentWillMount: function() {
-    this.socket = io('http://192.168.56.1:5000', {jsonp: false});
-    this.socket.on('tweet', this.updateTweet);
-  },
-  updateTweet: function(data) {
-    raw = this.state.raw;
-    raw.push(data);
-    this.setState({
-      tweets: this.state.tweets.cloneWithRows(raw.reverse()),
-      raw: raw,
-      loading: false
-    });
-  },
-  sendHash: function() {
-    this.setState({loading: true});
-    this.socket.emit('tag', {hash: this.state.hash});
-  },
-
   render: function() {
-    var Loader;
-    var Indicator;
-
-    if (this.state.loading) {
-      Loader = <ProgressBarAndroid style={styles.loader}/>
-    }
-
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Tweetes
-        </Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => this.setState({hash: text})}
-          onSubmitEditing={this.sendHash}
-          value={this.state.hash}
-        />
-
-        {Loader}
-        {Indicator}
-
-        <ListView
-          dataSource={this.state.tweets}
-          renderRow={ItemView}
-        />
-
+      <View title="<ToolbarAndroid>">
+        <ToolbarAndroid
+          actions={toolbarActions}
+          logo={require('./ic_launcher.png')}
+          onActionSelected={this._onActionSelected}
+          onIconClicked={() => this.setState({actionText: 'Icon clicked'})}
+          style={styles.toolbar}
+          subtitle={this.state.actionText}
+          title="Toolbar" />
+        <Text>{this.state.actionText}</Text>
       </View>
     );
-  }
+  },
+  _onActionSelected: function(position) {
+    this.setState({
+      actionText: 'Selected ' + toolbarActions[position].title,
+    });
+  },
 });
 
-
-ItemView = function(data) {
-  return (
-    <View style={itemViewStyle.view}>
-      <Image
-        source={{uri: data.user.image}}
-        style={itemViewStyle.image}
-      />
-      <Text style={itemViewStyle.name}> {data.user.name} </Text>
-      <Text style={itemViewStyle.text}> {data.text} </Text>
-    </View>
-  );
-};
-
+var toolbarActions = [
+  {title: 'Create', icon: require('./ic_launcher.png'), show: 'always'},
+  {title: 'Filter'},
+  {title: 'Filter'},
+  {title: 'Filter'},
+  {title: 'Filter'},
+  {title: 'Filter'},
+  {title: 'Settings', icon: {uri: 'http://slacy.me/images/favicon.png'}, show: 'always'},
+];
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    backgroundColor: '#F5FCFF',
-  },
-  loader: {
-    alignSelf: 'center'
-  },
-  input: {
-    height: 50,
-    margin: 20,
-    fontSize: 22
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  toolbar: {
+    backgroundColor: '#fafafa',
+    height: 56,
   },
 });
 
-var itemViewStyle = StyleSheet.create({
-  view: {
-    flex: 0,
-    backgroundColor: '#FAFFFF',
-    padding: 10,
-    margin: 20,
-    flexDirection: 'row',
-    borderColor: '#efefef',
-    borderBottomWidth: 2
-
-  },
-  name: {
-    fontWeight: 'bold',
-    color: '#333',
-    alignSelf: 'center',
-    fontSize: 20,
-    flex: 1
-  },
-  text: {
-    color: '#333',
-    alignSelf: 'center',
-    fontSize: 20,
-    flex: 1,
-  },
-  image: {
-    height: 50,
-    width: 50,
-    margin: 10,
-    alignSelf: 'center'
-  }
-});
-
-AppRegistry.registerComponent('Tweetes', () => Tweetes);
+AppRegistry.registerComponent('Tweetes', () => ToolbarAndroidExample);
