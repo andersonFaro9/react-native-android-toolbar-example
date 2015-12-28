@@ -1,5 +1,4 @@
-# react-native twitter stream example
-
+# react-native-android-toolbar-example
 
 start build:
 
